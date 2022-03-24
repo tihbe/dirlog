@@ -5,7 +5,7 @@ from datetime import datetime
 from . import _get_globals, _get_dev_mode
 
 
-def list_experiments(project: str, since: datetime = None, before: datetime = None) -> None:
+def list_experiments(project: str, since: datetime = None, before: datetime = None):
     exp_name = re.sub(r"\s+", "-", project)  # Remove whitespaces
     exp_name = re.sub(r"[^\w\s]", "", exp_name)  # Remove non letters/digits
     exp_dir = "" if _get_dev_mode() else _get_globals().get("experiments_directory", "")
@@ -21,12 +21,16 @@ def list_experiments(project: str, since: datetime = None, before: datetime = No
         return []
 
     if since is not None:
-        experiments_list = [p for p in experiments_list if datetime.strptime(p[:19], "%Y-%m-%d-%H-%M-%S") > since]
+        experiments_list = [p for p in experiments_list if datetime.strptime(p[:19], "%Y-%m-%d-%H-%M-%S") >= since]
     if before is not None:
         experiments_list = [p for p in experiments_list if datetime.strptime(p[:19], "%Y-%m-%d-%H-%M-%S") <= before]
 
     experiments_list = [os.path.join(exp_dir, p) for p in experiments_list]
     return experiments_list
+
+def get_experiment(project: str, date: datetime):
+    return list_experiments(project, since=date, before=date)[0]
+
 
 
 def create_df(experiments):

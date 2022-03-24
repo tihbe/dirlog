@@ -107,6 +107,21 @@ def sargs(func):
     return wrap
 
 
+def sstate(**ndarrays):
+    """Func for saving ndarrays to dirlog directory"""
+    import numpy as np
+
+    for name, ndarray in ndarrays.items():
+        np.save(jp(name), ndarray, allow_pickle=True)
+
+
+def gstate(name):
+    """Func for loading ndarray from dirlog directory"""
+    import numpy as np
+
+    return np.load(f"{jp(name)}.npy")
+
+
 def joinpth(path: str) -> str:
     """Add experiment directory to path"""
     dir_name = createdir()  # Create directory if setdir wasn't already called
